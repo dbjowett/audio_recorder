@@ -1,14 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+const options = {
+  audio: true,
+};
 
 export const useGetStream = () => {
-  const [userStream, setUserStream] = useState<MediaStream | null>(null);
-  const getStream = async () => {
-    if (navigator.mediaDevices) {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      setUserStream(stream);
-    }
-    getStream();
+  const [stream, setStream] = useState<MediaStream | null>(null);
 
-    return { stream: userStream };
-  };
+  useEffect(() => {
+    const getStream = async () => {
+      if (!navigator.mediaDevices) return;
+      const stream = await navigator.mediaDevices.getUserMedia(options);
+      setStream(stream);
+    };
+    getStream();
+  }, []);
+
+  return { stream };
 };
