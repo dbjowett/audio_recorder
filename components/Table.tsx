@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useIndexedDb } from "@/lib/hooks/useIndexedDb";
+import { AudioFile, useIndexedDb } from "@/lib/hooks/useIndexedDb";
 import { EllipsisVertical } from "lucide-react";
 import {
   DropdownMenu,
@@ -19,8 +19,14 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
+import { FC } from "react";
 
-const Dropdown = () => {
+const Dropdown: FC<{ file: AudioFile }> = ({ file }) => {
+  const { deleteById, updateFile } = useIndexedDb();
+
+  const handleDelete = () => deleteById(file.id);
+  const handleUpload = () => updateFile({ ...file, isUploaded: true });
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -30,15 +36,10 @@ const Dropdown = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem
-          onClick={() => navigator.clipboard.writeText(payment.id)}
-        >
-          Copy payment ID
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>View customer</DropdownMenuItem>
-        <DropdownMenuItem>View payment details</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleDelete}>Delete</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleDelete}>Rename</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleDelete}>Download </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleUpload}>Upload </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -70,7 +71,7 @@ export const AudioFileTable = () => {
                   <TableCell>{uploadedText}</TableCell>
                   <TableCell>{item.createdAt.toLocaleDateString()}</TableCell>
                   <TableCell className="flex float-end">
-                    <Dropdown />
+                    <Dropdown file={item} />
                   </TableCell>
                 </TableRow>
               );

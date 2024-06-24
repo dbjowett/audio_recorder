@@ -54,8 +54,6 @@ export const useRecorder = () => {
     recorderRef.current = null;
   };
 
-  console.log(recordedDataRef.current);
-
   return {
     startRecording,
     stopRecording,
