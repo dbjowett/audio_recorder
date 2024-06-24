@@ -9,23 +9,34 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { AudioFile, useIndexedDb } from "@/lib/hooks/useIndexedDb";
-import { EllipsisVertical } from "lucide-react";
+import {
+  Download,
+  EllipsisVertical,
+  Pencil,
+  Save,
+  Trash,
+  X,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
-import { FC } from "react";
+import { FC, useState } from "react";
+import { downloadBlob } from "@/lib/utils";
+import { Input } from "./ui/input";
 
-const Dropdown: FC<{ file: AudioFile }> = ({ file }) => {
-  const { deleteById, updateFile } = useIndexedDb();
+const Dropdown: FC<{ file: AudioFile; handleStartRename: () => void }> = ({
+  file,
+  handleStartRename,
+}) => {
+  const { deleteById } = useIndexedDb();
 
   const handleDelete = () => deleteById(file.id);
-  const handleUpload = () => updateFile({ ...file, isUploaded: true });
+  const handleDownload = () => downloadBlob(file.blob);
+  const handleEdit = () => handleStartRename();
 
   return (
     <DropdownMenu>
@@ -36,16 +47,43 @@ const Dropdown: FC<{ file: AudioFile }> = ({ file }) => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={handleDelete}>Delete</DropdownMenuItem>
-        <DropdownMenuItem onClick={handleDelete}>Rename</DropdownMenuItem>
-        <DropdownMenuItem onClick={handleDelete}>Download </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleUpload}>Upload </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleDelete} className="gap-4">
+          <Trash className="h-4 w-4" />
+          Delete
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleEdit} className="gap-4">
+          <Pencil className="h-4 w-4" />
+          Rename
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleDownload} className="gap-4">
+          <Download className="h-4 w-4" />
+          Download
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
 };
 export const AudioFileTable = () => {
-  const { allItems } = useIndexedDb();
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editingTitle, setEditingTitle] = useState<string>("");
+
+  const { allAudioFiles, updateFile } = useIndexedDb();
+
+  const handleStartRename = (item: AudioFile) => {
+    setEditingId(item.id);
+    setEditingTitle(item.title);
+  };
+
+  const handleSave = (item: AudioFile) => {
+    updateFile({ ...item, title: editingTitle });
+    handleCancel();
+  };
+
+  const handleCancel = () => {
+    setEditingId(null);
+    setEditingTitle("");
+  };
+
   return (
     <div className="max-h-[30vh] overflow-auto border-white">
       <Table>
@@ -55,23 +93,53 @@ export const AudioFileTable = () => {
             <TableHead className="w-[100px]">ID</TableHead>
             <TableHead>File Uploaded</TableHead>
             <TableHead>Date</TableHead>
-            <TableHead>''</TableHead>
+            <TableHead></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {allItems
+          {allAudioFiles
             ?.sort((a, b) => b.id - a.id)
             .map((item) => {
-              const uploadedText = item.isUploaded
-                ? "Uploaded"
-                : "Not Uploaded";
               return (
                 <TableRow key={item.id}>
                   <TableCell className="font-medium">ID{item.id}</TableCell>
-                  <TableCell>{uploadedText}</TableCell>
+                  {editingId === item.id ? (
+                    <TableCell>
+                      <div className="flex gap-2">
+                        <Input
+                          defaultValue={item.title}
+                          value={editingTitle}
+                          onChange={(e) => setEditingTitle(e.target.value)}
+                        />
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-10 w-[40px]"
+                          onClick={() => handleSave(item)}
+                        >
+                          <Save className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-10 w-[40px]"
+                          onClick={handleCancel}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  ) : (
+                    <TableCell onDoubleClick={() => handleStartRename(item)}>
+                      {item.title}
+                    </TableCell>
+                  )}
                   <TableCell>{item.createdAt.toLocaleDateString()}</TableCell>
                   <TableCell className="flex float-end">
-                    <Dropdown file={item} />
+                    <Dropdown
+                      file={item}
+                      handleStartRename={() => handleStartRename(item)}
+                    />
                   </TableCell>
                 </TableRow>
               );
