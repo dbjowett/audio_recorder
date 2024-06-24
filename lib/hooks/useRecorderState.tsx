@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 export type RecorderState = "not_started" | "paused" | "recording";
 
-const useRecorderState = (isRecording: boolean) => {
+export const useRecorderState = (isRecording: boolean) => {
   const hasStartedRef = useRef<boolean>(false);
   const [recorderState, setRecorderState] =
     useState<RecorderState>("not_started");
@@ -24,5 +24,3 @@ const useRecorderState = (isRecording: boolean) => {
 
   return recorderState;
 };
-
-export default useRecorderState;

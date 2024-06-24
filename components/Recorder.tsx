@@ -6,21 +6,15 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import {
-  Download,
-  Mic,
-  Pause,
-  PauseIcon,
-  StopCircle,
-  Trash,
-} from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Mic, PauseIcon, StopCircle } from "lucide-react";
 import { Visualizer } from "./Visualizer";
 import { Timer } from "./Timer";
 import { useRecorder } from "@/lib/hooks/useRecorder";
 import { RecorderState } from "@/lib/hooks/useRecorderState";
+import { useIndexedDb } from "@/lib/hooks/useIndexedDb";
 
 export const Recorder = () => {
+  const { saveToIndexedDB } = useIndexedDb();
   const {
     stream,
     startRecording,
@@ -28,9 +22,20 @@ export const Recorder = () => {
     pauseRecording,
     resumeRecording,
     recorderRef,
+    recordedBlob,
     recorderState,
     isRecording,
+    resetRecorder,
   } = useRecorder();
+
+  const handleStop = () => {
+    stopRecording();
+    const blob = new Blob(recordedBlob);
+    console.log(blob);
+    saveToIndexedDB(blob);
+    console.log("after");
+    resetRecorder();
+  };
 
   const btnMap: Record<RecorderState, ReactNode> = {
     not_started: (
@@ -50,7 +55,7 @@ export const Recorder = () => {
         <Button onClick={resumeRecording}>
           <Mic size={15} />
         </Button>
-        <Button onClick={stopRecording} size={"icon"}>
+        <Button onClick={handleStop} size={"icon"}>
           <StopCircle size={15} />
         </Button>
       </>
@@ -59,9 +64,6 @@ export const Recorder = () => {
       <>
         <Button onClick={pauseRecording}>
           <PauseIcon size={15} />
-        </Button>
-        <Button onClick={stopRecording} size={"icon"}>
-          <StopCircle size={15} />
         </Button>
       </>
     ),

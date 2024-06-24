@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/page";
 import { Github } from "lucide-react";
 import Link from "next/link";
+import { AudioFileTable } from "@/components/Table";
 export default function Home() {
   return (
     <div className="container relative flex-1 flex flex-col justify-center items-center min-h-screen">
@@ -17,22 +18,11 @@ export default function Home() {
         <PageHeaderHeading>
           Audio recorder with local storage.
         </PageHeaderHeading>
-        <Recorder />
-        <PageHeaderDescription>
-          Record audio files but keep them stored locally on your computer.
-        </PageHeaderDescription>
-        <PageActions>
-          <Link
-            target="_blank"
-            rel="noreferrer"
-            href={`https://github.com/dbjowett/audio-recorder`}
-          >
-            <Button variant={"secondary"} className="border-2">
-              <Github className="mr-2" size={20} /> <span>Source code</span>{" "}
-            </Button>
-          </Link>
-        </PageActions>
       </PageHeader>
+      <div className="max-w-[900px] w-full">
+        <Recorder />
+        <AudioFileTable />
+      </div>
     </div>
   );
 }

@@ -1,13 +1,12 @@
 import { useRef, useState } from "react";
-import useRecorderState from "./useRecorderState";
+import { useRecorderState } from "./useRecorderState";
 import { useGetStream } from "./useGetStream";
-import { CloudCog } from "lucide-react";
 
 export const useRecorder = () => {
   const recorderRef = useRef<MediaRecorder | null>(null);
 
   const [isRecording, setIsRecording] = useState<boolean>(false);
-  const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
+  const recordedDataRef = useRef<Blob[]>([]);
 
   const { stream } = useGetStream();
 
@@ -16,6 +15,11 @@ export const useRecorder = () => {
       if (!stream) return;
       recorderRef.current = new MediaRecorder(stream);
       recorderRef.current.start();
+      recorderRef.current.ondataavailable = (e) => {
+        console.log(e);
+        recordedDataRef.current.push(e.data);
+      };
+
       setIsRecording(true);
     } catch (error) {
       console.error("Error starting the recording:", error);
@@ -46,15 +50,22 @@ export const useRecorder = () => {
 
   const recorderState = useRecorderState(isRecording);
 
+  const resetRecorder = () => {
+    recorderRef.current = null;
+  };
+
+  console.log(recordedDataRef.current);
+
   return {
     startRecording,
     stopRecording,
     pauseRecording,
     resumeRecording,
     isRecording,
-    recordedBlob,
+    recordedBlob: recordedDataRef.current,
     recorderRef,
     recorderState,
     stream,
+    resetRecorder,
   };
 };

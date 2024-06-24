@@ -16,5 +16,10 @@ export const useGetStream = () => {
     getStream();
   }, []);
 
-  return { stream };
+  const resetStream = () => {
+    stream?.getAudioTracks().map((t) => t.stop());
+    setStream(null);
+  };
+
+  return { stream, resetStream };
 };
