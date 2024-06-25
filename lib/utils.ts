@@ -14,6 +14,12 @@ export const downloadBlob = (blob: Blob) => {
   document.body.removeChild(downloadLink);
 };
 
+export const blobToAudio = (blob?: Blob) => {
+  if (!blob) return;
+  const url = URL.createObjectURL(blob);
+  return url;
+};
+
 export const padWithLeadingZeros = (num: number, length: number): string => {
   return String(num).padStart(length, "0");
 };

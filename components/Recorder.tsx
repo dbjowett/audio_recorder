@@ -6,7 +6,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { Mic, PauseIcon, StopCircle } from "lucide-react";
+import { CloudCog, Mic, PauseIcon, StopCircle } from "lucide-react";
 import { Visualizer } from "./Visualizer";
 import { Timer } from "./Timer";
 import { useRecorder } from "@/lib/hooks/useRecorder";
@@ -14,7 +14,6 @@ import { RecorderState } from "@/lib/hooks/useRecorderState";
 import { useIndexedDb } from "@/lib/hooks/useIndexedDb";
 
 export const Recorder = () => {
-  const { saveToIndexedDB } = useIndexedDb();
   const {
     stream,
     startRecording,
@@ -22,7 +21,6 @@ export const Recorder = () => {
     pauseRecording,
     resumeRecording,
     recorderRef,
-    recordedBlob,
     recorderState,
     isRecording,
     resetRecorder,
@@ -30,10 +28,7 @@ export const Recorder = () => {
 
   const handleStop = () => {
     stopRecording();
-    const blob = new Blob(recordedBlob);
-    console.log(blob);
-    saveToIndexedDB(blob);
-    console.log("after");
+    if (!recorderRef.current) return;
     resetRecorder();
   };
 

@@ -5,6 +5,8 @@ import { ThemeProvider } from "next-themes";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Navbar } from "@/components/Navbar";
 import { cn } from "@/lib/utils";
+import { AudioPlayer } from "@/components/AudioPlayer";
+import { AudioFileProvider } from "@/components/providers/audio-context-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,16 +24,18 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
     <html lang="en">
       <body className={cn(inter.className, "")}>
         <TooltipProvider delayDuration={0}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            <Navbar />
-            <main>{children}</main>
-            {/* <Footer /> */}
-          </ThemeProvider>
+          <AudioFileProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              <Navbar />
+              <main>{children}</main>
+              <AudioPlayer />
+            </ThemeProvider>
+          </AudioFileProvider>
         </TooltipProvider>
       </body>
     </html>

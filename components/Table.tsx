@@ -12,7 +12,9 @@ import { AudioFile, useIndexedDb } from "@/lib/hooks/useIndexedDb";
 import {
   Download,
   EllipsisVertical,
+  Pause,
   Pencil,
+  Play,
   Save,
   Trash,
   X,
@@ -24,9 +26,13 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
-import { FC, useState } from "react";
+import { FC, useContext, useState } from "react";
 import { downloadBlob } from "@/lib/utils";
 import { Input } from "./ui/input";
+import {
+  AudioFileContext,
+  useAudioFileContext,
+} from "./providers/audio-context-provider";
 
 const Dropdown: FC<{ file: AudioFile; handleStartRename: () => void }> = ({
   file,
@@ -67,6 +73,9 @@ export const AudioFileTable = () => {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingTitle, setEditingTitle] = useState<string>("");
 
+  const { setSelectedFile, setIsPlaying, isPlaying, selectedFile } =
+    useAudioFileContext();
+
   const { allAudioFiles, updateFile } = useIndexedDb();
 
   const handleStartRename = (item: AudioFile) => {
@@ -84,12 +93,25 @@ export const AudioFileTable = () => {
     setEditingTitle("");
   };
 
+  const isFilePlaying = (item: AudioFile) =>
+    isPlaying && selectedFile?.id === item.id;
+
+  const handlePlayPause = (item: AudioFile) => {
+    if (isFilePlaying(item)) {
+      setIsPlaying(false);
+    } else {
+      setSelectedFile(item);
+      setIsPlaying(true);
+    }
+  };
+
   return (
     <div className="max-h-[30vh] overflow-auto border-white">
       <Table>
         <TableCaption>A list of your recent audio recordings.</TableCaption>
         <TableHeader>
           <TableRow>
+            <TableHead className="w-[100px]">Play</TableHead>
             <TableHead className="w-[100px]">ID</TableHead>
             <TableHead>File Uploaded</TableHead>
             <TableHead>Date</TableHead>
@@ -102,6 +124,19 @@ export const AudioFileTable = () => {
             .map((item) => {
               return (
                 <TableRow key={item.id}>
+                  <TableCell>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handlePlayPause(item)}
+                    >
+                      {isFilePlaying(item) ? (
+                        <Pause />
+                      ) : (
+                        <Play className="w-4 h-4" />
+                      )}
+                    </Button>
+                  </TableCell>
                   <TableCell className="font-medium">ID{item.id}</TableCell>
                   {editingId === item.id ? (
                     <TableCell>

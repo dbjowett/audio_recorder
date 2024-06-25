@@ -1,12 +1,13 @@
 import { useRef, useState } from "react";
 import { useRecorderState } from "./useRecorderState";
 import { useGetStream } from "./useGetStream";
+import { useIndexedDb } from "./useIndexedDb";
 
 export const useRecorder = () => {
-  const recorderRef = useRef<MediaRecorder | null>(null);
-
   const [isRecording, setIsRecording] = useState<boolean>(false);
-  const recordedDataRef = useRef<Blob[]>([]);
+
+  const recorderRef = useRef<MediaRecorder | null>(null);
+  const { saveToIndexedDB } = useIndexedDb();
 
   const { stream } = useGetStream();
 
@@ -15,11 +16,7 @@ export const useRecorder = () => {
       if (!stream) return;
       recorderRef.current = new MediaRecorder(stream);
       recorderRef.current.start();
-      recorderRef.current.ondataavailable = (e) => {
-        console.log(e);
-        recordedDataRef.current.push(e.data);
-      };
-
+      recorderRef.current.ondataavailable = ({ data }) => saveToIndexedDB(data);
       setIsRecording(true);
     } catch (error) {
       console.error("Error starting the recording:", error);
@@ -42,10 +39,10 @@ export const useRecorder = () => {
 
   const stopRecording = () => {
     if (!recorderRef.current) return;
+    recorderRef.current.stop();
     setIsRecording(false);
     recorderRef.current.onstop = () => {};
     stream?.getTracks().forEach((t) => t.stop());
-    recorderRef.current.stop();
   };
 
   const recorderState = useRecorderState(isRecording);
@@ -60,7 +57,6 @@ export const useRecorder = () => {
     pauseRecording,
     resumeRecording,
     isRecording,
-    recordedBlob: recordedDataRef.current,
     recorderRef,
     recorderState,
     stream,
