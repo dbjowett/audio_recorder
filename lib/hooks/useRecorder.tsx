@@ -3,7 +3,7 @@ import { useRecorderState } from "./useRecorderState";
 import { useGetStream } from "./useGetStream";
 import { useIndexedDb } from "./useIndexedDb";
 
-export const useRecorder = () => {
+export const useRecorder = (transcript: string) => {
   const [isRecording, setIsRecording] = useState<boolean>(false);
 
   const recorderRef = useRef<MediaRecorder | null>(null);

@@ -1,55 +1,57 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 export type LanguageType = "ko-KR" | "en-US";
 
 export const useASR = () => {
+  const recognitionRef = useRef<any | null>(null);
   const [isListening, setIsListening] = useState(false);
 
   const [transcript, setTranscript] = useState("");
-  const [error, setError] = useState("");
 
   const startListening = (language: LanguageType) => {
-    setError("");
     setIsListening(true);
 
     try {
       const SpeechRecognition =
-        window?.SpeechRecognition || window.webkitSpeechRecognition;
-      const recognition = new SpeechRecognition();
+        window?.SpeechRecognition || window?.webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
 
-      recognition.continuous = true;
-      recognition.lang = language;
+      recognitionRef.current.continuous = true;
+      recognitionRef.current.lang = language;
 
-      recognition.onresult = (event) => {
+      recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
         let transcript = "";
+
         for (let i = event.resultIndex; i < event.results.length; i++) {
           transcript = event.results[i][0].transcript + "\n";
         }
         setTranscript((prev) => prev + transcript);
       };
 
-      recognition.onerror = () => {
-        setError("Something went wrong. Please try again.");
+      recognitionRef.current.onerror = () => {
+        setTranscript("Something went wrong. Please try again.");
         setIsListening(false);
       };
 
-      recognition.onend = () => {
+      recognitionRef.current.onend = () => {
         setIsListening(false);
         if (isListening) {
+          console.log("Restarting");
           startListening(language); // ** Restart
         }
       };
 
-      recognition.start();
+      recognitionRef.current.start();
     } catch (err) {
-      setError("Speech recognition is not supported in this browser.");
+      setTranscript("Speech recognition is not supported in this browser.");
       setIsListening(false);
     }
   };
 
   const stopListening = () => {
     setIsListening(false);
+    recognitionRef.current?.stop();
   };
 
   const clearTranscript = () => {
@@ -61,6 +63,5 @@ export const useASR = () => {
     stopListening,
     clearTranscript,
     transcript,
-    error,
   };
 };

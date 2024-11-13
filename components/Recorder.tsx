@@ -14,11 +14,11 @@ import { RecorderState } from "@/lib/hooks/useRecorderState";
 import { useASR } from "@/lib/hooks/useASR";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-import { PageHeader } from "@/components/ui/page";
-
 export const Recorder = () => {
-  const scrollRef = useRef(null);
-  const contentRef = useRef(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  const { startListening, stopListening, transcript } = useASR();
 
   const {
     stream,
@@ -30,9 +30,7 @@ export const Recorder = () => {
     recorderState,
     isRecording,
     resetRecorder,
-  } = useRecorder();
-
-  const { startListening, stopListening, transcript } = useASR();
+  } = useRecorder(transcript);
 
   const handleStop = () => {
     stopListening();
@@ -110,7 +108,7 @@ export const Recorder = () => {
           isRecording={isRecording}
           mediaRecorderRef={recorderRef}
         />
-        <div className="flex gap-2">{btnMap[recorderState]}</div>
+        <div className="flex gap-2 m-2">{btnMap[recorderState]}</div>
       </div>
 
       <div className="mb-1 items-center w-32 -top-12 left-0  justify-center gap-0.5 border p-1.5 rounded-md font-mono font-medium text-foreground flex">
@@ -121,10 +119,14 @@ export const Recorder = () => {
       <ScrollArea
         id="scroll-area"
         ref={scrollRef}
-        className="h-32 w-full rounded-md border mb-12 p-3 "
+        className=" h-32 w-full rounded-md border mb-6 p-3 "
       >
-        <div ref={contentRef} className="text-center font-mono text-pretty">
-          {transcript || "Start recording to see the transcript"}
+        <div ref={contentRef} className="text-center  text-pretty h-full">
+          {transcript || (
+            <div className="h-full flex items-center justify-center">
+              Transcript will appear here..
+            </div>
+          )}
         </div>
       </ScrollArea>
     </>

@@ -1,5 +1,4 @@
 "use client";
-import { useState } from "react";
 import { Recorder } from "@/components/Recorder";
 import { Particles } from "@/components/Particles";
 
@@ -11,9 +10,6 @@ import {
 
 import { AudioFileTable } from "@/components/Table";
 export default function Home() {
-  const [transcript, setTranscript] = useState<string>("");
-  const [isRecording, setIsRecording] = useState<boolean>(false);
-
   return (
     <div className="container relative flex-1 flex flex-col justify-center items-center min-h-screen">
       <Particles className="absolute inset-0 -z-10 " />
