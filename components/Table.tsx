@@ -149,7 +149,7 @@ export const AudioFileTable = () => {
           <TableHeader>
             <TableRow>
               <TableHead className="w-[100px]">Play</TableHead>
-              <TableHead className="w-[100px]">ID</TableHead>
+              {/* <TableHead className="w-[100px]">ID</TableHead> */}
               <TableHead>File Uploaded</TableHead>
               <TableHead>Date</TableHead>
               <TableHead></TableHead>
@@ -174,7 +174,7 @@ export const AudioFileTable = () => {
                         )}
                       </Button>
                     </TableCell>
-                    <TableCell className="font-medium">ID{item.id}</TableCell>
+                    {/* <TableCell className="font-medium">ID{item.id}</TableCell> */}
                     {editingId === item.id ? (
                       <TableCell>
                         <div className="flex gap-2">

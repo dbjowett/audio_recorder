@@ -9,7 +9,7 @@ export const useASR = () => {
 
   const [transcript, setTranscript] = useState("");
 
-  const startListening = (language: LanguageType) => {
+  const startListening = (language?: LanguageType) => {
     setIsListening(true);
 
     try {
@@ -18,7 +18,7 @@ export const useASR = () => {
       recognitionRef.current = new SpeechRecognition();
 
       recognitionRef.current.continuous = true;
-      recognitionRef.current.lang = language;
+      recognitionRef.current.lang = language || "en-US";
 
       recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
         let transcript = "";
