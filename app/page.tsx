@@ -1,16 +1,19 @@
+"use client";
+import { useState } from "react";
 import { Recorder } from "@/components/Recorder";
 import { Particles } from "@/components/Particles";
-import { Button } from "@/components/ui/button";
+
 import {
-  PageActions,
   PageHeader,
   PageHeaderDescription,
   PageHeaderHeading,
 } from "@/components/ui/page";
-import { Github } from "lucide-react";
-import Link from "next/link";
+
 import { AudioFileTable } from "@/components/Table";
 export default function Home() {
+  const [transcript, setTranscript] = useState<string>("");
+  const [isRecording, setIsRecording] = useState<boolean>(false);
+
   return (
     <div className="container relative flex-1 flex flex-col justify-center items-center min-h-screen">
       <Particles className="absolute inset-0 -z-10 " />
@@ -18,6 +21,9 @@ export default function Home() {
         <PageHeaderHeading>
           Audio recorder with local storage.
         </PageHeaderHeading>
+        <PageHeaderDescription>
+          100% stored in browser storage
+        </PageHeaderDescription>
       </PageHeader>
       <div className="max-w-[900px] w-full">
         <Recorder />

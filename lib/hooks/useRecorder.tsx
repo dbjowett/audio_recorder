@@ -43,12 +43,16 @@ export const useRecorder = () => {
     setIsRecording(false);
     recorderRef.current.onstop = () => {};
     stream?.getTracks().forEach((t) => t.stop());
+    recorderRef.current = null;
+
+    resetRecorderState();
   };
 
-  const recorderState = useRecorderState(isRecording);
+  const { recorderState, resetRecorderState } = useRecorderState(isRecording);
 
   const resetRecorder = () => {
     recorderRef.current = null;
+    setIsRecording(false);
   };
 
   return {

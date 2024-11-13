@@ -79,6 +79,7 @@ export const Visualizer: FC<VisualizerProps> = ({
     if (isRecording) {
       visualizeVolume();
     } else {
+      handleStop();
       cancelAnimationFrame(animationRef.current || 0);
     }
 
@@ -86,6 +87,13 @@ export const Visualizer: FC<VisualizerProps> = ({
       cancelAnimationFrame(animationRef.current || 0);
     };
   }, [isRecording, theme, stream, canvasRef.current]);
+
+  const handleStop = () => {
+    if (!canvasRef.current) return;
+    canvasRef.current
+      .getContext("2d")
+      ?.clearRect(0, 0, canvasRef.current?.width, canvasRef.current.height);
+  };
 
   return (
     <canvas ref={canvasRef} className="h-full w-full bg-background flex" />

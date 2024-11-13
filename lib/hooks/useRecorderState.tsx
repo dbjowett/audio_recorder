@@ -22,5 +22,10 @@ export const useRecorderState = (isRecording: boolean) => {
     });
   }, [isRecording]);
 
-  return recorderState;
+  const resetRecorderState = () => {
+    setRecorderState("not_started");
+    hasStartedRef.current = false;
+  };
+
+  return { recorderState, resetRecorderState };
 };

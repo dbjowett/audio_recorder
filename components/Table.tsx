@@ -19,20 +19,31 @@ import {
   Trash,
   X,
 } from "lucide-react";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+
 import { Button } from "./ui/button";
-import { FC, useContext, useState } from "react";
+import { FC, useState } from "react";
 import { downloadBlob } from "@/lib/utils";
 import { Input } from "./ui/input";
+import { useAudioFileContext } from "./providers/audio-context-provider";
+
 import {
-  AudioFileContext,
-  useAudioFileContext,
-} from "./providers/audio-context-provider";
+  AlertDialogTrigger,
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "./ui/alert-dialog";
 
 const Dropdown: FC<{ file: AudioFile; handleStartRename: () => void }> = ({
   file,
@@ -53,18 +64,38 @@ const Dropdown: FC<{ file: AudioFile; handleStartRename: () => void }> = ({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={handleDelete} className="gap-4">
-          <Trash className="h-4 w-4" />
-          Delete
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleEdit} className="gap-4">
-          <Pencil className="h-4 w-4" />
-          Rename
-        </DropdownMenuItem>
         <DropdownMenuItem onClick={handleDownload} className="gap-4">
           <Download className="h-4 w-4" />
           Download
         </DropdownMenuItem>
+
+        <DropdownMenuItem onClick={handleEdit} className="gap-4">
+          <Pencil className="h-4 w-4" />
+          Rename
+        </DropdownMenuItem>
+
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <DropdownMenuItem onClick={handleDelete} className="gap-4">
+              <Trash className="h-4 w-4" />
+              Delete
+            </DropdownMenuItem>
+          </AlertDialogTrigger>
+
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete your
+                account and remove your data from our servers.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction>Continue</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -80,7 +111,7 @@ export const AudioFileTable = () => {
 
   const handleStartRename = (item: AudioFile) => {
     setEditingId(item.id);
-    setEditingTitle(item.title);
+    // setEditingTitle(item.title);
   };
 
   const handleSave = (item: AudioFile) => {
