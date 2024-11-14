@@ -20,8 +20,8 @@ export const useSummarize = () => {
 
     try {
       const generator = await pipeline(
-        "summarization",
-        "Xenova/distilbart-cnn-6-6"
+        "summarization"
+        // "Xenova/distilbart-cnn-6-6"
       );
 
       const output = (await generator(
