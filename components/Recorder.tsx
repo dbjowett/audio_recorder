@@ -17,8 +17,11 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export const Recorder = () => {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
+  const transcriptScrollRef = useRef<HTMLDivElement>(null);
+  const transcriptContentRef = useRef<HTMLDivElement>(null);
+
+  const summaryScrollRef = useRef<HTMLDivElement>(null);
+  const summaryContentRef = useRef<HTMLDivElement>(null);
 
   const { startListening, stopListening, transcript } = useASR();
 
@@ -93,20 +96,31 @@ export const Recorder = () => {
   };
 
   useEffect(() => {
-    if (scrollRef.current && contentRef.current) {
-      const scrollContainer = scrollRef.current?.querySelector(
+    if (transcriptScrollRef.current && transcriptContentRef.current) {
+      const scrollContainer = transcriptScrollRef.current?.querySelector(
         "[data-radix-scroll-area-viewport]"
       );
       if (!scrollContainer) return;
 
       scrollContainer.scrollTo({
-        top: contentRef.current.offsetHeight,
+        top: transcriptContentRef.current.offsetHeight,
         behavior: "smooth",
       });
     }
   }, [transcript]);
 
-  // useEffect(() => {}, [transcript]);
+  useEffect(() => {
+    if (summaryScrollRef.current && summaryContentRef.current) {
+      const scrollContainer = summaryScrollRef.current?.querySelector(
+        "[data-radix-scroll-area-viewport]"
+      );
+      if (!scrollContainer) return;
+      scrollContainer.scrollTo({
+        top: summaryContentRef.current.offsetHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [summary]);
 
   return (
     <>
@@ -131,10 +145,13 @@ export const Recorder = () => {
 
           <ScrollArea
             id="scroll-area"
-            ref={scrollRef}
+            ref={transcriptScrollRef}
             className=" h-32  rounded-md border mb-6 p-3 "
           >
-            <div ref={contentRef} className="text-center  text-pretty h-full">
+            <div
+              ref={transcriptContentRef}
+              className="text-center  text-pretty h-full"
+            >
               {transcript || (
                 <div className="h-full flex items-center justify-center">
                   Transcript will appear here..
@@ -153,10 +170,13 @@ export const Recorder = () => {
           </div>
           <ScrollArea
             id="scroll-area"
-            ref={scrollRef}
+            ref={summaryScrollRef}
             className=" h-32  rounded-md border mb-6 p-3 "
           >
-            <div ref={contentRef} className="text-center  text-pretty h-full">
+            <div
+              ref={summaryContentRef}
+              className="text-center  text-pretty h-full"
+            >
               {isLoading ? (
                 <div className="h-full flex mt-1 flex-col gap-2">
                   <Skeleton className="h-4 mx-2" />
