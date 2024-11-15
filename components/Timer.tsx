@@ -31,7 +31,7 @@ export const Timer = ({ isRecording }: { isRecording: boolean }) => {
   }, [isRecording, timer]);
 
   return (
-    <div className="items-center -top-12 left-0 absolute justify-center gap-0.5 border p-1.5 rounded-md font-mono font-medium text-foreground flex">
+    <div className="w-32 items-center justify-center gap-0.5 border p-1.5 rounded-md font-mono font-medium text-foreground flex">
       <span className="rounded-md bg-background p-0.5 text-foreground">
         {hourLeft}
       </span>

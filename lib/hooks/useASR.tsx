@@ -1,7 +1,14 @@
 "use client";
 import { useState, useRef } from "react";
 
-export type LanguageType = "ko-KR" | "en-US";
+export type LanguageType = "ko" | "en";
+
+type LanguageMap = "ko-KR" | "en-US";
+
+const languageMap: Record<LanguageType, LanguageMap> = {
+  ko: "ko-KR",
+  en: "en-US",
+};
 
 export const useASR = () => {
   const recognitionRef = useRef<any | null>(null);
@@ -9,7 +16,7 @@ export const useASR = () => {
 
   const [transcript, setTranscript] = useState("");
 
-  const startListening = (language?: LanguageType) => {
+  const startListening = (language: LanguageType) => {
     setIsListening(true);
 
     try {
@@ -18,7 +25,7 @@ export const useASR = () => {
       recognitionRef.current = new SpeechRecognition();
 
       recognitionRef.current.continuous = true;
-      recognitionRef.current.lang = language || "en-US";
+      recognitionRef.current.lang = languageMap[language];
 
       recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
         let transcript = "";
