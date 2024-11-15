@@ -143,7 +143,7 @@ export const Recorder = () => {
             <div>
               <Label className="text-foreground text-sm mb-1">Language</Label>
               <Select
-                onValueChange={(e) => setSelectedLanguage(e)}
+                onValueChange={(e) => setSelectedLanguage(e as LanguageType)}
                 value={selectedLanguage}
               >
                 <SelectTrigger className="w-[120px]">
