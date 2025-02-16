@@ -1,57 +1,63 @@
-"use client";
-import { useState, useRef } from "react";
+'use client';
+import { useRef, useState } from 'react';
 
-export type LanguageType = "ko" | "en";
+export type LanguageType = 'ko' | 'en';
 
-type LanguageMap = "ko-KR" | "en-US";
+type LanguageMap = 'ko-KR' | 'en-US';
 
 const languageMap: Record<LanguageType, LanguageMap> = {
-  ko: "ko-KR",
-  en: "en-US",
+  ko: 'ko-KR',
+  en: 'en-US',
 };
 
 export const useASR = () => {
-  const recognitionRef = useRef<any | null>(null);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
   const [isListening, setIsListening] = useState(false);
 
-  const [transcript, setTranscript] = useState("");
+  const [transcript, setTranscript] = useState('');
 
   const startListening = (language: LanguageType) => {
+    console.log('Starting');
     setIsListening(true);
 
     try {
-      const SpeechRecognition =
-        window?.SpeechRecognition || window?.webkitSpeechRecognition;
+      const SpeechRecognition = window?.SpeechRecognition || window?.webkitSpeechRecognition;
+
       recognitionRef.current = new SpeechRecognition();
+
+      if (!recognitionRef.current) {
+        throw new Error('Speech recognition is not supported');
+      }
 
       recognitionRef.current.continuous = true;
       recognitionRef.current.lang = languageMap[language];
 
       recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
-        let transcript = "";
+        let transcript = '';
 
         for (let i = event.resultIndex; i < event.results.length; i++) {
-          transcript = event.results[i][0].transcript + "\n";
+          transcript = event.results[i][0].transcript + '\n';
         }
         setTranscript((prev) => prev + transcript);
       };
 
-      recognitionRef.current.onerror = () => {
-        setTranscript("Something went wrong. Please try again.");
+      recognitionRef.current.onerror = (error) => {
+        setTranscript('Something went wrong. Please try again.');
+        console.error('Error ', error);
         setIsListening(false);
       };
 
       recognitionRef.current.onend = () => {
         setIsListening(false);
         if (isListening) {
-          console.log("Restarting");
+          console.log('Restarting');
           startListening(language); // ** Restart
         }
       };
 
       recognitionRef.current.start();
     } catch (err) {
-      setTranscript("Speech recognition is not supported in this browser.");
+      setTranscript('Speech recognition is not supported in this browser.');
       setIsListening(false);
     }
   };
@@ -62,7 +68,7 @@ export const useASR = () => {
   };
 
   const clearTranscript = () => {
-    setTranscript("");
+    setTranscript('');
   };
 
   return {

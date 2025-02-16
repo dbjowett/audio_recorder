@@ -1,34 +1,30 @@
-"use client";
-import React, { ReactNode, useEffect, useRef, useState } from "react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Button } from "@/components/ui/button";
-import { CloudCog, Mic, PauseIcon, StopCircle } from "lucide-react";
+'use client';
+import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Mic, PauseIcon, StopCircle } from 'lucide-react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 
-import { Visualizer } from "./Visualizer";
-import { Timer } from "./Timer";
-import { useRecorder } from "@/lib/hooks/useRecorder";
-import { RecorderState } from "@/lib/hooks/useRecorderState";
-import { useASR, LanguageType } from "@/lib/hooks/useASR";
-import { useSummarize } from "@/lib/hooks/useSummarize";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Skeleton } from "@/components/ui/skeleton";
+import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Label } from "@radix-ui/react-dropdown-menu";
+} from '@/components/ui/select';
+import { Skeleton } from '@/components/ui/skeleton';
+import { LanguageType, useASR } from '@/lib/hooks/useASR';
+import { useRecorder } from '@/lib/hooks/useRecorder';
+import { RecorderState } from '@/lib/hooks/useRecorderState';
+import { useSummarize } from '@/lib/hooks/useSummarize';
+import { Label } from '@radix-ui/react-dropdown-menu';
+import { Timer } from './Timer';
+import { Visualizer } from './Visualizer';
 
 export const Recorder = () => {
-  const [selectedLanguage, setSelectedLanguage] = useState<LanguageType>("en"); // Spoken Language
+  const [selectedLanguage, setSelectedLanguage] = useState<LanguageType>('en'); // Spoken Language
 
-  const [summary, setSummary] = useState("");
+  const [summary, setSummary] = useState('');
 
   const transcriptScrollRef = useRef<HTMLDivElement>(null);
   const transcriptContentRef = useRef<HTMLDivElement>(null);
@@ -92,7 +88,7 @@ export const Recorder = () => {
         <Button onClick={handleResume}>
           <Mic size={15} />
         </Button>
-        <Button onClick={handleStop} size={"icon"}>
+        <Button onClick={handleStop} size={'icon'}>
           <StopCircle size={15} />
         </Button>
       </>
@@ -109,13 +105,13 @@ export const Recorder = () => {
   useEffect(() => {
     if (transcriptScrollRef.current && transcriptContentRef.current) {
       const scrollContainer = transcriptScrollRef.current?.querySelector(
-        "[data-radix-scroll-area-viewport]"
+        '[data-radix-scroll-area-viewport]'
       );
       if (!scrollContainer) return;
 
       scrollContainer.scrollTo({
         top: transcriptContentRef.current.offsetHeight,
-        behavior: "smooth",
+        behavior: 'smooth',
       });
     }
   }, [transcript]);
@@ -123,12 +119,12 @@ export const Recorder = () => {
   useEffect(() => {
     if (summaryScrollRef.current && summaryContentRef.current) {
       const scrollContainer = summaryScrollRef.current?.querySelector(
-        "[data-radix-scroll-area-viewport]"
+        '[data-radix-scroll-area-viewport]'
       );
       if (!scrollContainer) return;
       scrollContainer.scrollTo({
         top: summaryContentRef.current.offsetHeight,
-        behavior: "smooth",
+        behavior: 'smooth',
       });
     }
   }, [summary]);
@@ -158,11 +154,7 @@ export const Recorder = () => {
           </div>
         </div>
         <div className="flex mt-1 h-16  mb-6 rounded-md w-full items-center justify-center gap-2 max-w-5xl border p-1">
-          <Visualizer
-            stream={stream}
-            isRecording={isRecording}
-            mediaRecorderRef={recorderRef}
-          />
+          <Visualizer stream={stream} isRecording={isRecording} mediaRecorderRef={recorderRef} />
           <div className="flex gap-2 m-2">{btnMap[recorderState]}</div>
         </div>
       </div>
@@ -181,10 +173,7 @@ export const Recorder = () => {
             ref={transcriptScrollRef}
             className=" h-32  rounded-md border mb-6 p-3 "
           >
-            <div
-              ref={transcriptContentRef}
-              className="text-center  text-pretty h-full"
-            >
+            <div ref={transcriptContentRef} className="text-center  text-pretty h-full">
               {transcript.length > 0 ? (
                 transcript
               ) : (
@@ -208,10 +197,7 @@ export const Recorder = () => {
             ref={summaryScrollRef}
             className=" h-32  rounded-md border mb-6 p-3 "
           >
-            <div
-              ref={summaryContentRef}
-              className="text-center  text-pretty h-full"
-            >
+            <div ref={summaryContentRef} className="text-center  text-pretty h-full">
               {isLoading ? (
                 <div className="h-full flex mt-1 flex-col gap-2">
                   <Skeleton className="h-4 mx-2" />
