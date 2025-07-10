@@ -1,38 +1,96 @@
 'use client';
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { blobToAudio } from '@/lib/utils';
+
 import { useAudioFileContext } from './providers/audio-context-provider';
 import { Button } from './ui/button';
+import { Slider } from './ui/slider';
 
 export const AudioPlayer = () => {
   const { selectedFile, setIsPlaying, isPlaying } = useAudioFileContext();
+  const [progress, setProgress] = useState<number>(0);
 
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const togglePlay = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-      } else {
-        audioRef.current.play();
-      }
-      setIsPlaying(!isPlaying);
-    }
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const updateProgress = () => {
+      const percent = (audio.currentTime / audio.duration) * 100 || 0;
+      setProgress(percent);
+    };
+
+    audio.addEventListener('timeupdate', updateProgress);
+    return () => {
+      audio.removeEventListener('timeupdate', updateProgress);
+    };
+  }, [selectedFile]);
+
+  const handleSliderChange = (value: number[]) => {
+    const audio = audioRef.current;
+    if (!audio || !audio.duration) return;
+
+    const percent = value[0];
+    const newTime = (percent / 100) * audio.duration;
+    audio.currentTime = newTime;
+    setProgress(percent);
   };
 
+  useEffect(() => {
+    if (audioRef.current && selectedFile?.blob) {
+      const url = blobToAudio(selectedFile.blob) || '';
+      audioRef.current.src = url;
+      audioRef.current.load();
+
+      setIsPlaying(false);
+    }
+  }, [selectedFile]);
+
+  const togglePlay = async () => {
+    if (!audioRef.current) return;
+
+    audioRef.current.volume = 1;
+    audioRef.current.muted = false;
+    audioRef.current.loop = false;
+    audioRef.current.preload = 'auto';
+
+    if (isPlaying) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    } else {
+      try {
+        await audioRef.current.play();
+        setIsPlaying(true);
+      } catch (err) {
+        console.error('Audio play error:', err);
+      }
+    }
+  };
   return (
-    <div className="fixed bottom-0 w-full  text-white p-4 border-t-2 border-border">
-      <div className="container mx-auto max-w-xl flex items-center justify-between">
-        <Button onClick={togglePlay}>{isPlaying ? 'Pause' : 'Play'}</Button>
-        <div className="text-center flex-1">
-          <p className="text-md">
-            {selectedFile?.title
-              ? `Playing: ${selectedFile?.title}`
-              : 'Select Audio File to Start Playing'}
-          </p>
+    <div className="fixed  bg-transparent backdrop-blur-md bottom-0 w-full  text-white p-4 border-t-2 border-border">
+      <div className="container mx-auto max-w-xl flex flex-col items-center justify-between gap-4">
+        <Slider
+          value={[progress]}
+          max={100}
+          step={0.1}
+          onValueChange={handleSliderChange}
+          className="w-full"
+        />
+        <div className="flex w-full items-center justify-between">
+          <Button onClick={togglePlay} disabled={!selectedFile?.blob}>
+            {isPlaying ? 'Pause' : 'Play'}
+          </Button>
+          <div className="text-center flex-1">
+            <p className="text-md">
+              {selectedFile?.title
+                ? `Playing: ${selectedFile?.title}`
+                : 'Select Audio File to Start Playing'}
+            </p>
+          </div>
         </div>
-        <audio ref={audioRef} src={blobToAudio(selectedFile?.blob)} />
+        <audio autoPlay={false} ref={audioRef} />
       </div>
     </div>
   );

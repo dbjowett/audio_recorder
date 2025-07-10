@@ -21,7 +21,7 @@ export default function Home() {
           ⚠️ Works best on Chrome due to experimental web APIs ⚠️
         </PageHeaderSubHeading>
       </PageHeader>
-      <div className="max-w-[900px] w-full">
+      <div className="max-w-[900px] w-full mb-[80px]">
         <Recorder />
         <AudioFileTable />
       </div>
