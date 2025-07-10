@@ -1,4 +1,4 @@
-import { TextGenerationConfig } from '@huggingface/transformers';
+import { TextGenerationConfig, pipeline } from '@huggingface/transformers';
 import { useState } from 'react';
 
 export const useSummarize = () => {
@@ -10,11 +10,8 @@ export const useSummarize = () => {
 
     try {
       if (typeof window === 'undefined') {
-        // SSR: avoid crashing the build
         throw new Error('Summarization is only available on the client.');
       }
-
-      const { pipeline } = await import('@huggingface/transformers');
 
       const config: Partial<TextGenerationConfig> = {
         min_length: 30,
@@ -22,7 +19,7 @@ export const useSummarize = () => {
         early_stopping: true,
       };
 
-      const generator = await pipeline('summarization', 'Xenova/distilbart-cnn-6-6');
+      const generator = await pipeline('summarization');
       const output = (await generator(transcript, config as TextGenerationConfig)) as {
         summary_text: string;
       }[];

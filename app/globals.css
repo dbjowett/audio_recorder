@@ -1,8 +1,10 @@
+@import 'tailwindcss';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
+@utility base {
   :root {
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
@@ -66,7 +68,7 @@
   }
 }
 
-@layer base {
+@utility base {
   * {
     @apply border-border;
   }
