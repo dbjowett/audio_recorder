@@ -14,28 +14,30 @@ export const AudioPlayer = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
 
   useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
+    if (!audioRef.current) return;
 
     const updateProgress = () => {
-      const percent = (audio.currentTime / audio.duration) * 100 || 0;
-      setProgress(percent);
+      if (!audioRef.current) return;
+
+      const percent = (audioRef.current.currentTime / audioRef.current.duration) * 100 || 0;
+      setProgress(Number(percent));
     };
 
-    audio.addEventListener('timeupdate', updateProgress);
+    audioRef.current.addEventListener('timeupdate', updateProgress);
     return () => {
-      audio.removeEventListener('timeupdate', updateProgress);
+      if (!audioRef.current) return;
+      audioRef.current.removeEventListener('timeupdate', updateProgress);
     };
   }, [selectedFile]);
 
   const handleSliderChange = (value: number[]) => {
-    const audio = audioRef.current;
-    if (!audio || !audio.duration) return;
+    if (!audioRef.current || !audioRef.current.duration || audioRef.current.duration === Infinity)
+      return;
 
     const percent = value[0];
-    const newTime = (percent / 100) * audio.duration;
-    audio.currentTime = newTime;
-    setProgress(percent);
+    const newTime = (percent / 100) * audioRef.current.duration;
+    audioRef.current.currentTime = newTime;
+    setProgress(Number(percent));
   };
 
   useEffect(() => {
