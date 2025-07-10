@@ -1,3 +1,4 @@
+'use client';
 import { Recorder } from '@/components/Recorder';
 
 import {

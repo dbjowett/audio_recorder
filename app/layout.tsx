@@ -4,7 +4,7 @@ import { AudioFileProvider } from '@/components/providers/audio-context-provider
 import { Toaster } from '@/components/ui/sonner';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
-import type { Metadata } from 'next';
+import { Metadata } from 'next';
 import { ThemeProvider } from 'next-themes';
 import { Inter } from 'next/font/google';
 import './globals.css';
