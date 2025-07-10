@@ -1,6 +1,6 @@
 'use client';
 import { useRef, useState } from 'react';
-
+import { toast } from 'sonner';
 export type LanguageType = 'ko' | 'en';
 
 type LanguageMap = 'ko-KR' | 'en-US';
@@ -17,7 +17,6 @@ export const useASR = () => {
   const [transcript, setTranscript] = useState('');
 
   const startListening = (language: LanguageType) => {
-    console.log('Starting');
     setIsListening(true);
 
     try {
@@ -44,6 +43,9 @@ export const useASR = () => {
       recognitionRef.current.onerror = (error) => {
         setTranscript('Something went wrong. Please try again.');
         console.error('Error ', error);
+        toast('Something went wrong during transcription.', {
+          description: `Please try another browser if this issue continues.`,
+        });
         setIsListening(false);
       };
 
