@@ -15,14 +15,14 @@ export const useSummarize = () => {
 
       const { pipeline } = await import('@huggingface/transformers');
 
-      const config = {
-        min_length: 30,
-        max_length: 100,
-        early_stopping: true,
-      };
+      // const config = {
+      //   min_length: 30,
+      //   max_length: 100,
+      //   early_stopping: true,
+      // };
 
-      const generator = await pipeline('summarization', 'Xenova/distilbart-cnn-6-6');
-      const output = (await generator(transcript, config)) as {
+      const generator = await pipeline('summarization');
+      const output = (await generator(transcript)) as {
         summary_text: string;
       }[];
 
