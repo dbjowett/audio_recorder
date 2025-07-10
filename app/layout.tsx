@@ -32,7 +32,6 @@ export default function RootLayout({ children }: Readonly<RootLayoutProps>) {
               enableSystem
               disableTransitionOnChange
             >
-              <div className="text-red-500 font-bold text-3xl">Tailwind is working!</div>
               <Navbar />
               <main>{children}</main>
               <AudioPlayer />

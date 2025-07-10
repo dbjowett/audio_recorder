@@ -12,7 +12,7 @@ import { Particles } from '@/components/Particles';
 import { AudioFileTable } from '@/components/Table';
 export default function Home() {
   return (
-    <div className="container flex-1 flex flex-col justify-center items-center min-h-screen">
+    <div className="container flex-1 flex flex-col justify-center items-center min-h-screen m-auto">
       <Particles className="absolute inset-0 -z-10 " />
       <PageHeader>
         <PageHeaderHeading>Audio recorder with local storage.</PageHeaderHeading>
