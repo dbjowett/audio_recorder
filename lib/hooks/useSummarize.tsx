@@ -1,3 +1,4 @@
+'use client';
 import { TextGenerationConfig, pipeline } from '@huggingface/transformers';
 import { useState } from 'react';
 
