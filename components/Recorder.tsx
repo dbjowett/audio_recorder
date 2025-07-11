@@ -149,9 +149,9 @@ export const Recorder = () => {
         <div className="flex items-center justify-between">
           <Timer isRecording={isRecording} />
 
-          <div className="flex gap-2">
-            <div>
-              <Label className="text-foreground text-sm mb-1">Audio Device</Label>
+          <div className="flex gap-2 ">
+            <div className="invisible md:visible">
+              <Label className="text-foreground text-sm mb-1 lg:invisible">Audio Device</Label>
               <Select
                 onValueChange={(e) => setSelectedDeviceId(e)}
                 value={selectedDeviceId || settings?.deviceId || 'preferred'}
@@ -176,7 +176,7 @@ export const Recorder = () => {
                 onValueChange={(e) => setSelectedLanguage(e as LanguageType)}
                 value={selectedLanguage}
               >
-                <SelectTrigger className="w-[120px]">
+                <SelectTrigger className="max-w-[120px]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
