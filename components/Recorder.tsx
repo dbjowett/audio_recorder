@@ -45,14 +45,25 @@ export const Recorder = () => {
     recorderState,
     isRecording,
     resetRecorder,
-  } = useRecorder(transcript);
+    devices,
+    selectedDeviceId,
+    setSelectedDeviceId,
+    resetStream,
+  } = useRecorder();
 
   const handleStop = async () => {
-    const summary = await summarize(transcript);
+    let summary = '';
+    try {
+      summary = await summarize(transcript);
+    } catch (error) {
+      console.error('Error summarizing transcript:', error);
+      summary = 'Failed to generate summary. Please try again later.';
+    }
     setSummary(summary);
     stopListening();
     stopRecording();
     resetRecorder();
+    resetStream();
   };
 
   const handleStart = () => {
@@ -129,6 +140,9 @@ export const Recorder = () => {
     }
   }, [summary]);
 
+  const audioTrack = stream?.getAudioTracks()[0];
+  const settings = audioTrack?.getSettings();
+
   return (
     <>
       <div className="mt-12">
@@ -136,6 +150,26 @@ export const Recorder = () => {
           <Timer isRecording={isRecording} />
 
           <div className="flex gap-2">
+            <div>
+              <Label className="text-foreground text-sm mb-1">Audio Device</Label>
+              <Select
+                onValueChange={(e) => setSelectedDeviceId(e)}
+                value={selectedDeviceId || settings?.deviceId || 'preferred'}
+              >
+                <SelectTrigger className="max-w-[200px]">
+                  <SelectValue />
+                </SelectTrigger>
+
+                <SelectContent>
+                  <SelectItem value="preferred">Preferred Device</SelectItem>
+                  {devices.map((device) => (
+                    <SelectItem key={device.id} value={device.id}>
+                      {device.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <div>
               <Label className="text-foreground text-sm mb-1">Language</Label>
               <Select

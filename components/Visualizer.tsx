@@ -1,17 +1,13 @@
-import { useTheme } from "next-themes";
-import { FC, MutableRefObject, useEffect, useRef } from "react";
+import { useTheme } from 'next-themes';
+import { FC, MutableRefObject, useEffect, useRef } from 'react';
 
 interface VisualizerProps {
-  stream: MediaStream | null;
+  stream: MediaStream | null | undefined;
   isRecording: boolean;
   mediaRecorderRef: MutableRefObject<MediaRecorder | null>;
 }
 
-export const Visualizer: FC<VisualizerProps> = ({
-  stream,
-  isRecording,
-  mediaRecorderRef,
-}) => {
+export const Visualizer: FC<VisualizerProps> = ({ stream, isRecording, mediaRecorderRef }) => {
   const { theme } = useTheme();
 
   const animationRef = useRef<any>(null);
@@ -28,14 +24,14 @@ export const Visualizer: FC<VisualizerProps> = ({
     source.connect(analyserRef.current);
 
     const canvas = canvasRef.current;
-    const canvasCtx = canvas.getContext("2d");
+    const canvasCtx = canvas.getContext('2d');
     const WIDTH = canvas.width;
     const HEIGHT = canvas.height;
 
     const drawWaveform = (dataArray: Uint8Array) => {
       if (!canvasCtx) return;
       canvasCtx.clearRect(0, 0, WIDTH, HEIGHT);
-      canvasCtx.fillStyle = "#939393";
+      canvasCtx.fillStyle = '#939393';
 
       const barWidth = 1;
       const spacing = 1;
@@ -51,11 +47,7 @@ export const Visualizer: FC<VisualizerProps> = ({
     };
 
     const visualizeVolume = () => {
-      if (
-        !mediaRecorderRef.current?.stream?.getAudioTracks()[0]?.getSettings()
-          .sampleRate
-      )
-        return;
+      if (!mediaRecorderRef.current?.stream?.getAudioTracks()[0]?.getSettings().sampleRate) return;
 
       const bufferLength =
         (mediaRecorderRef.current?.stream?.getAudioTracks()[0]?.getSettings()
@@ -91,11 +83,9 @@ export const Visualizer: FC<VisualizerProps> = ({
   const handleStop = () => {
     if (!canvasRef.current) return;
     canvasRef.current
-      .getContext("2d")
+      .getContext('2d')
       ?.clearRect(0, 0, canvasRef.current?.width, canvasRef.current.height);
   };
 
-  return (
-    <canvas ref={canvasRef} className="h-full w-full bg-background flex" />
-  );
+  return <canvas ref={canvasRef} className="h-full w-full bg-background flex" />;
 };

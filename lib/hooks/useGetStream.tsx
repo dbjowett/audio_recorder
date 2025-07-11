@@ -1,25 +1,22 @@
-import { useEffect, useState } from "react";
+import { toast } from 'sonner';
 
-const options = {
-  audio: true,
-};
-
-export const useGetStream = () => {
-  const [stream, setStream] = useState<MediaStream | null>(null);
-
-  useEffect(() => {
-    const getStream = async () => {
-      if (!navigator.mediaDevices) return;
-      const stream = await navigator.mediaDevices.getUserMedia(options);
-      setStream(stream);
-    };
-    getStream();
-  }, []);
-
-  const resetStream = () => {
-    stream?.getAudioTracks().map((t) => t.stop());
-    setStream(null);
+export const useGetStream = (deviceId: string | null) => {
+  const getStream = async (): Promise<MediaStream | undefined> => {
+    try {
+      const newStream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          deviceId: deviceId ? { exact: deviceId } : undefined,
+        },
+        video: false,
+      });
+      return newStream;
+    } catch (error) {
+      console.error('Error accessing media devices:', error);
+      toast('Failed to access audio input device. Please check your permissions.', {
+        description: 'Ensure that the browser has permission to access the microphone.',
+      });
+    }
   };
 
-  return { stream, resetStream };
+  return { getStream };
 };

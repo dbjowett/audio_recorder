@@ -1,25 +1,29 @@
-import { useRef, useState } from "react";
-import { useRecorderState } from "./useRecorderState";
-import { useGetStream } from "./useGetStream";
-import { useIndexedDb } from "./useIndexedDb";
+import { useRef, useState } from 'react';
+import { useGetDevice } from './useGetDevice';
+import { useGetStream } from './useGetStream';
+import { useIndexedDb } from './useIndexedDb';
+import { useRecorderState } from './useRecorderState';
 
-export const useRecorder = (transcript: string) => {
+export const useRecorder = () => {
   const [isRecording, setIsRecording] = useState<boolean>(false);
+  const streamRef = useRef<MediaStream | null | undefined>(null);
 
   const recorderRef = useRef<MediaRecorder | null>(null);
   const { saveToIndexedDB } = useIndexedDb();
 
-  const { stream } = useGetStream();
+  const { devices, selectedDeviceId, setSelectedDeviceId } = useGetDevice();
+  const { getStream } = useGetStream(selectedDeviceId);
 
   const startRecording = async () => {
     try {
-      if (!stream) return;
-      recorderRef.current = new MediaRecorder(stream);
+      streamRef.current = await getStream();
+      if (!streamRef.current) return;
+      recorderRef.current = new MediaRecorder(streamRef.current);
       recorderRef.current.start();
-      recorderRef.current.ondataavailable = ({ data }) => saveToIndexedDB(data);
+      recorderRef.current.ondataavailable = ({ data: transcript }) => saveToIndexedDB(transcript);
       setIsRecording(true);
     } catch (error) {
-      console.error("Error starting the recording:", error);
+      console.error('Error starting the recording:', error);
     }
   };
 
@@ -42,7 +46,7 @@ export const useRecorder = (transcript: string) => {
     recorderRef.current.stop();
     setIsRecording(false);
     recorderRef.current.onstop = () => {};
-    stream?.getTracks().forEach((t) => t.stop());
+    streamRef.current?.getTracks().forEach((t) => t.stop());
     recorderRef.current = null;
 
     resetRecorderState();
@@ -55,6 +59,11 @@ export const useRecorder = (transcript: string) => {
     setIsRecording(false);
   };
 
+  const resetStream = () => {
+    streamRef.current?.getAudioTracks().forEach((track) => track.stop());
+    streamRef.current = null;
+  };
+
   return {
     startRecording,
     stopRecording,
@@ -63,7 +72,11 @@ export const useRecorder = (transcript: string) => {
     isRecording,
     recorderRef,
     recorderState,
-    stream,
+    stream: streamRef.current,
+    devices,
+    selectedDeviceId,
+    setSelectedDeviceId,
+    resetStream,
     resetRecorder,
   };
 };

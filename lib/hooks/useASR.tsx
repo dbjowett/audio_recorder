@@ -13,7 +13,6 @@ const languageMap: Record<LanguageType, LanguageMap> = {
 export const useASR = () => {
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const [isListening, setIsListening] = useState(false);
-
   const [transcript, setTranscript] = useState('');
 
   const startListening = (language: LanguageType) => {
