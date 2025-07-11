@@ -143,6 +143,8 @@ export const Recorder = () => {
   const audioTrack = stream?.getAudioTracks()[0];
   const settings = audioTrack?.getSettings();
 
+  const deviceOptions = devices.filter((device) => !!device.id);
+
   return (
     <>
       <div className="mt-12">
@@ -150,26 +152,28 @@ export const Recorder = () => {
           <Timer isRecording={isRecording} />
 
           <div className="flex gap-2 ">
-            <div className="invisible md:visible">
-              <Label className="text-foreground text-sm mb-1 lg:invisible">Audio Device</Label>
-              <Select
-                onValueChange={(e) => setSelectedDeviceId(e)}
-                value={selectedDeviceId || settings?.deviceId || 'preferred'}
-              >
-                <SelectTrigger className="max-w-[200px]">
-                  <SelectValue />
-                </SelectTrigger>
+            {deviceOptions.length < 1 ? null : (
+              <div className="invisible md:visible">
+                <Label className="text-foreground text-sm mb-1">Audio Device</Label>
+                <Select
+                  onValueChange={(e) => setSelectedDeviceId(e)}
+                  value={selectedDeviceId || settings?.deviceId || 'preferred'}
+                >
+                  <SelectTrigger className="max-w-[200px]">
+                    <SelectValue />
+                  </SelectTrigger>
 
-                <SelectContent>
-                  <SelectItem value="preferred">Preferred Device</SelectItem>
-                  {devices.map((device) => (
-                    <SelectItem key={device.id} value={device.id}>
-                      {device.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+                  <SelectContent>
+                    <SelectItem value="preferred">Preferred Device</SelectItem>
+                    {deviceOptions.map((device) => (
+                      <SelectItem key={device.id} value={device.id}>
+                        {device.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
             <div>
               <Label className="text-foreground text-sm mb-1">Language</Label>
               <Select
