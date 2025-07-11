@@ -71,29 +71,32 @@ export const AudioPlayer = () => {
     }
   };
   return (
-    <div className="fixed  bg-transparent backdrop-blur-md bottom-0 w-full  text-white p-4 border-t-2 border-border">
-      <div className="container mx-auto max-w-xl flex flex-col items-center justify-between gap-4">
-        <Slider
-          value={[progress]}
-          max={100}
-          step={0.1}
-          onValueChange={handleSliderChange}
-          className="w-full"
-        />
-        <div className="flex w-full items-center justify-between">
-          <Button onClick={togglePlay} disabled={!selectedFile?.blob}>
-            {isPlaying ? 'Pause' : 'Play'}
-          </Button>
-          <div className="text-center flex-1">
-            <p className="text-md">
-              {selectedFile?.title
-                ? `Playing: ${selectedFile?.title}`
-                : 'Select Audio File to Start Playing'}
-            </p>
+    <>
+      <div className="fixed h-24 bg-transparent backdrop-blur-md bottom-0 w-full  text-white p-4 border-t-2 border-border">
+        <div className="container mx-auto max-w-xl flex flex-col items-center justify-between gap-4">
+          <Slider
+            value={[progress]}
+            max={100}
+            step={0.1}
+            onValueChange={handleSliderChange}
+            className="w-full"
+          />
+          <div className="flex w-full items-center justify-between">
+            <Button onClick={togglePlay} disabled={!selectedFile?.blob}>
+              {isPlaying ? 'Pause' : 'Play'}
+            </Button>
+            <div className="text-center flex-1">
+              <p className="text-md">
+                {selectedFile?.title
+                  ? `Playing: ${selectedFile?.title}`
+                  : 'Select Audio File to Start Playing'}
+              </p>
+            </div>
           </div>
+          <audio autoPlay={false} ref={audioRef} />
         </div>
-        <audio autoPlay={false} ref={audioRef} />
       </div>
-    </div>
+      <div className="h-24" />
+    </>
   );
 };

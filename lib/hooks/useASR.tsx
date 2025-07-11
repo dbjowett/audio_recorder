@@ -23,9 +23,7 @@ export const useASR = () => {
 
       recognitionRef.current = new SpeechRecognition();
 
-      if (!recognitionRef.current) {
-        throw new Error('Speech recognition is not supported');
-      }
+      if (!recognitionRef.current) throw new Error('Speech recognition is not supported');
 
       recognitionRef.current.continuous = true;
       recognitionRef.current.lang = languageMap[language];

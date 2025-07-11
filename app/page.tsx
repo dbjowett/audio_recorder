@@ -12,7 +12,7 @@ import { Particles } from '@/components/Particles';
 import { AudioFileTable } from '@/components/Table';
 export default function Home() {
   return (
-    <div className="container flex-1 flex flex-col justify-center items-center min-h-screen m-auto">
+    <div className="m-auto flex flex-col items-center pl-2 pr-2">
       <Particles className="absolute inset-0 -z-10 " />
       <PageHeader>
         <PageHeaderHeading>Audio recorder with local storage.</PageHeaderHeading>
@@ -21,7 +21,7 @@ export default function Home() {
           ⚠️ Works best on Chrome due to experimental web APIs ⚠️
         </PageHeaderSubHeading>
       </PageHeader>
-      <div className="max-w-[900px] w-full mb-[80px]">
+      <div className="max-w-[900px] w-full ">
         <Recorder />
         <AudioFileTable />
       </div>
